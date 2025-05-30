@@ -1,14 +1,36 @@
+import { calculateNewValue } from '@testing-library/user-event/dist/utils';
 import {useState} from 'react';
 function Square({value, onSquareClick}) {
   return <button className="square" onClick={onSquareClick}>{value}</button>;
 }
 export default function Board() {
+  const [xIsNext, setXIsNext] = useState(true); //stan przechowujący informację, czy to "X" jest następne
   const [squares, setSquares] = useState(Array(9).fill(null));
   function handleClick(i) {
+    //jeśli pole ma zawartość to nie reagujemy na kliknięcie
+    if(squares[i] != null || checkWinner(squares) != null) return; //jeśli pole jest już zajęte lub ktoś już wygrał
     //to bedzie nasza funkcja reagująca na kliknięcie pola
     const nextSquares = squares.slice();//tworzymy kopię tablicy squares
-    nextSquares[i] = "X"; //ustawiamy środkowy element na "X"
+    if(xIsNext)
+      nextSquares[i] = "X"; //ustawiamy wybrany element na "X"
+    else
+      nextSquares[i] = "O"; //ustawiamy wybrany element na "O"
     setSquares(nextSquares); //uaktualniamy stan komponentu
+    setXIsNext(!xIsNext); //przełączamy stan xIsNext z kółka na krzyżyk lub odwrotnie
+  }
+  function checkWinner(squares) {
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // wiersze
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // kolumny
+      [0, 4, 8], [2, 4, 6] // przekątne
+    ];
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a]; // zwraca "X" lub "O" jeśli jest zwycięzca
+      }
+    }
+    return null; // brak zwycięzcy
   }
   return <>
     <div className="board-row">
