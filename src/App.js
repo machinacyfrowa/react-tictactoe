@@ -32,7 +32,16 @@ export default function Board() {
     }
     return null; // brak zwycięzcy
   }
+  //przechowuje informacje o zwyciezcy lub null jeśli jeszcze trwa gra
+  const winner = checkWinner(squares);
+  let status;
+  if (winner) {
+    status = `Zwycięzca: ${winner}`;
+  } else {
+    status = `Następny gracz: ${xIsNext ? 'X' : 'O'}`;
+  }
   return <>
+    <div className="status">{status}</div>
     <div className="board-row">
       <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
       <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
